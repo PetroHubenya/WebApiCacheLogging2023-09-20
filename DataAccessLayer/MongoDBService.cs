@@ -22,6 +22,17 @@ namespace DataAccessLayer
         //----------------------------------------------------------------
         // Box CRUD
 
+        // Create Box
+        public async Task CreateBoxAsync(Box box)
+        {
+            await _boxCollection.InsertOneAsync(box);
+        }
+
+        // Get Box
+        
+
+
+
 
         //----------------------------------------------------------------
         // Sensor CRUD

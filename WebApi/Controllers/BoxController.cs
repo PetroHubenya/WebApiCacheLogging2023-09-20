@@ -1,5 +1,6 @@
 ﻿using Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -32,8 +33,10 @@ namespace WebApi.Controllers
 
         // POST api/<BoxController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult<Box>> PostBoxAsync([FromBody] Box box)
         {
+            await _boxService.CreateBoxAsync(box);
+            return Ok(box);
         }
 
         // PUT api/<BoxController>/5
