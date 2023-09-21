@@ -1,10 +1,11 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Interfaces;
+using Microsoft.Extensions.Options;
 using Models;
 using MongoDB.Driver;
 
 namespace DataAccessLayer
 {
-    public class MongoDBService
+    public class MongoDBService : IMongoDBService
     {
         private readonly IMongoCollection<Box> _boxCollection;
 
@@ -17,6 +18,13 @@ namespace DataAccessLayer
             _boxCollection = database.GetCollection<Box>(mongoDBSettings.Value.CollectionNameBoxes);
             _sensorCollection = database.GetCollection<Sensor>(mongoDBSettings.Value.CollectionNameSensors);
         }
+
+        //----------------------------------------------------------------
+        // Box CRUD
+
+
+        //----------------------------------------------------------------
+        // Sensor CRUD
 
 
 
