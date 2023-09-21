@@ -1,3 +1,4 @@
+using BusinessLogicLayer;
 using DataAccessLayer;
 using Interfaces;
 using Models;
@@ -15,7 +16,11 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.Configure<MongoDBSettings>(builder.Configuration.GetSection("MongoDB"));
 
-builder.Services.AddSingleton<IMongoDBService, MongoDBService>();
+builder.Services.AddSingleton<IDataService, MongoDBService>();
+
+builder.Services.AddScoped<IBoxService, BoxService>();
+
+builder.Services.AddScoped<ISensorService, SensorService>();
 
 //----------------------------------------------------------------
 

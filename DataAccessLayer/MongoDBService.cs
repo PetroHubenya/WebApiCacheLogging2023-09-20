@@ -5,7 +5,7 @@ using MongoDB.Driver;
 
 namespace DataAccessLayer
 {
-    public class MongoDBService : IMongoDBService
+    public class MongoDBService : IDataService
     {
         private readonly IMongoCollection<Box> _boxCollection;
 
