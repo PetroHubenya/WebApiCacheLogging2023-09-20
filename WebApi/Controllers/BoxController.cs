@@ -19,9 +19,10 @@ namespace WebApi.Controllers
 
         // GET: api/<BoxController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<ActionResult<List<Box>>> GetAllBoxesAsync()
         {
-            return new string[] { "value1", "value2" };
+            var result = await _boxService.GetAllBoxesAsync();
+            return Ok(result);
         }
 
         // GET api/<BoxController>/5

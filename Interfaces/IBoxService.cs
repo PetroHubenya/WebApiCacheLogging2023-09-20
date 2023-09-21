@@ -10,5 +10,7 @@ namespace Interfaces
     public interface IBoxService
     {
         Task CreateBoxAsync(Box box);
+
+        Task<List<Box>> GetAllBoxesAsync();
     }
 }

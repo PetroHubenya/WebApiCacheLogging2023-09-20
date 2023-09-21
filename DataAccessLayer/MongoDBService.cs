@@ -1,6 +1,7 @@
 ﻿using Interfaces;
 using Microsoft.Extensions.Options;
 using Models;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace DataAccessLayer
@@ -29,7 +30,10 @@ namespace DataAccessLayer
         }
 
         // Get Box
-        
+        public async Task<List<Box>> GetAllBoxesAsync()
+        {
+            return await _boxCollection.Find(new BsonDocument()).ToListAsync();
+        }
 
 
 

@@ -12,10 +12,16 @@ namespace BusinessLogicLayer
             _dataService = dataService;
         }
 
-        // Create
+        // Create box
         public async Task CreateBoxAsync(Box box)
         {
             await _dataService.CreateBoxAsync(box);
+        }
+
+        // Get all boxes
+        public async Task<List<Box>> GetAllBoxesAsync()
+        {
+            return await _dataService.GetAllBoxesAsync();
         }
 
     }
