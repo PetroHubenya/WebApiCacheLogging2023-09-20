@@ -17,39 +17,58 @@ namespace WebApi.Controllers
             _boxService = boxService;
         }
 
-        // GET: api/<BoxController>
+        // GET: api/<BoxController>             // Get all boxes
         [HttpGet]
         public async Task<ActionResult<List<Box>>> GetAllBoxesAsync()
         {
             var result = await _boxService.GetAllBoxesAsync();
+
             return Ok(result);
         }
 
-        // GET api/<BoxController>/5
+        // GET api/<BoxController>/5            // Get box by id.
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<ActionResult<Box>> GetBoxAsync(string id)
         {
-            return "value";
+            var result = await _boxService.GetBoxAsync(id);
+
+            return Ok(result);
         }
 
-        // POST api/<BoxController>
+        // POST api/<BoxController>             // Create box.
         [HttpPost]
-        public async Task<ActionResult<Box>> PostBoxAsync([FromBody] Box box)
+        public async Task<IActionResult> PostBoxAsync([FromBody] Box box)
         {
             await _boxService.CreateBoxAsync(box);
-            return Ok(box);
+
+            return Ok("The box is created.");
         }
 
-        // PUT api/<BoxController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        // PUT api/<BoxController>/5            // Update box.
+        [HttpPut("id")]
+        public async Task<IActionResult> UpdateBoxAsync(string id, [FromBody] Box newBox)
         {
+            await _boxService.UpdateBoxAsync(id, newBox);
+
+            return Ok("The box is updated.");
         }
 
         // DELETE api/<BoxController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> DeleteBoxAsync(string id)
         {
+            await _boxService.DeleteBoxAsync(id);
+
+            return Ok("The box is deleted.");
+        }
+
+        // Add sensor to the box.
+        [HttpPost("{boxId}/{sensorId}")]
+        public async Task<IActionResult> AddSensorToBoxAsync(string boxId, string sensorId)
+        {
+            await _boxService.AddSensorToBoxAsync(boxId, sensorId);
+
+            return Ok("The sensor is added to the box.");
         }
     }
 }

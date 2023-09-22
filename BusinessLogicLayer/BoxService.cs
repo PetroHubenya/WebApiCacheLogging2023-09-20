@@ -32,9 +32,9 @@ namespace BusinessLogicLayer
         }
 
         // Update box.
-        public async Task UpdateBoxAsync(Box newBox)
+        public async Task UpdateBoxAsync(string id, Box newBox)
         {
-            await _dataService.UpdateBoxAsync(newBox);
+            await _dataService.UpdateBoxAsync(id, newBox);
         }
 
         // Delete box.

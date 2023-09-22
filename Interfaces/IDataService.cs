@@ -19,7 +19,7 @@ namespace Interfaces
         Task<List<Sensor>> GetAllSensorsAsync();
         Task<Box> GetBoxAsync(string id);
         Task<Sensor> GetSensorAsync(string id);
-        Task<UpdateResult> UpdateBoxAsync(Box newBox);
-        Task<UpdateResult> UpdateSensorAsync(Sensor newSensor);
+        Task<UpdateResult> UpdateBoxAsync(string id, Box newBox);
+        Task<ReplaceOneResult> UpdateSensorAsync(string id, Sensor newSensor);
     }
 }

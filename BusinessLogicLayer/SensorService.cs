@@ -37,9 +37,9 @@ namespace BusinessLogicLayer
         }
 
         // Update sensor.
-        public async Task UpdateSensorAsync(Sensor newSensor)
+        public async Task UpdateSensorAsync(string id, Sensor newSensor)
         {
-            await _dataService.UpdateSensorAsync(newSensor);
+            await _dataService.UpdateSensorAsync(id, newSensor);
         }
 
         // Delete sensor.

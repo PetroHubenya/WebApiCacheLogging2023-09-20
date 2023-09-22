@@ -43,9 +43,9 @@ namespace DataAccessLayer
         }
 
         // Update box.
-        public async Task<UpdateResult> UpdateBoxAsync(Box newBox)
+        public async Task<UpdateResult> UpdateBoxAsync(string id, Box newBox)
         {
-            var filter = Builders<Box>.Filter.Eq(b => b.Id, newBox.Id);
+            var filter = Builders<Box>.Filter.Eq(b => b.Id, id);
 
             var update = Builders<Box>.Update.Set(b => b.Name, newBox.Name);
 
@@ -99,13 +99,11 @@ namespace DataAccessLayer
         }
 
         // Update sensor.
-        public async Task<UpdateResult> UpdateSensorAsync(Sensor newSensor)
+        public async Task<ReplaceOneResult> UpdateSensorAsync(string id, Sensor newSensor)
         {
-            var filter = Builders<Sensor>.Filter.Eq(b => b.Id, newSensor.Id);
+            var filter = Builders<Sensor>.Filter.Eq(b => b.Id, id);
 
-            var update = Builders<Sensor>.Update.Set(b => b.Name, newSensor.Name);
-
-            return await _sensorCollection.UpdateOneAsync(filter, update);
+            return await _sensorCollection.ReplaceOneAsync(filter, newSensor);
         }
 
         // Delete sensor.

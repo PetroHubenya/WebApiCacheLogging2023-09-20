@@ -18,8 +18,6 @@ namespace Models
 
         public TypeOfSensor SensorType { get; set; }
 
-        public double? Value { get; set; }
-
-        public DateTime Timestamp { get; set; }
+        public List<SensorData>? SensorData { get; set; }
     }
 }

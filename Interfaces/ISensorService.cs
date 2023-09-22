@@ -13,6 +13,6 @@ namespace Interfaces
         Task DeleteSensorAsync(string id);
         Task<List<Sensor>> GetAllSensorsAsync();
         Task<Sensor> GetSensorAsync(string id);
-        Task UpdateSensorAsync(Sensor newSensor);
+        Task UpdateSensorAsync(string id, Sensor newSensor);
     }
 }

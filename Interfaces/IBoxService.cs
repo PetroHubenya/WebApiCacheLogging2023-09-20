@@ -14,6 +14,6 @@ namespace Interfaces
         Task DeleteBoxAsync(string id);
         Task<List<Box>> GetAllBoxesAsync();
         Task<Box> GetBoxAsync(string id);
-        Task UpdateBoxAsync(Box newBox);
+        Task UpdateBoxAsync(string id, Box newBox);
     }
 }
