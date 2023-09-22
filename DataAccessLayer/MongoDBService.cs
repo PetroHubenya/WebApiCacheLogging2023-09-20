@@ -59,8 +59,6 @@ namespace DataAccessLayer
 
             return await _boxCollection.DeleteOneAsync(filter);
         }
-        
-        // Sensor CRUD.----------------------------------------------------------------
 
         // Add sensor to the box.
         public async Task<ReplaceOneResult> AddSensorToBox(string boxId, string sensorId)
@@ -77,6 +75,8 @@ namespace DataAccessLayer
 
             return await _boxCollection.ReplaceOneAsync(boxFilter, box);
         }
+
+        // Sensor CRUD.----------------------------------------------------------------
 
         // Create sensor.
         public async Task CreateSensorAsync(Sensor sensor)
