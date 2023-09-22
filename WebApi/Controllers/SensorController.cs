@@ -7,11 +7,11 @@ namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SensorCongtroller : ControllerBase
+    public class SensorController : ControllerBase
     {
         private readonly ISensorService _sensorService;
 
-        public SensorCongtroller(ISensorService sensorService)
+        public SensorController(ISensorService sensorService)
         {
             _sensorService = sensorService;
         }

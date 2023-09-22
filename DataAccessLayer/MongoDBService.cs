@@ -35,7 +35,7 @@ namespace DataAccessLayer
         }
 
         // Get box by id.
-        public async Task<Box> GetBox(string id)
+        public async Task<Box> GetBoxAsync(string id)
         {
             var filter = Builders<Box>.Filter.Eq(b => b.Id, id);
 
@@ -43,7 +43,7 @@ namespace DataAccessLayer
         }
 
         // Update box.
-        public async Task<UpdateResult> UpdateBox(Box newBox)
+        public async Task<UpdateResult> UpdateBoxAsync(Box newBox)
         {
             var filter = Builders<Box>.Filter.Eq(b => b.Id, newBox.Id);
 
@@ -53,7 +53,7 @@ namespace DataAccessLayer
         }
 
         // Delete box.
-        public async Task<DeleteResult> DeleteBox(string id)
+        public async Task<DeleteResult> DeleteBoxAsync(string id)
         {
             var filter = Builders<Box>.Filter.Eq(b => b.Id, id);
 
@@ -61,7 +61,7 @@ namespace DataAccessLayer
         }
 
         // Add sensor to the box.
-        public async Task<ReplaceOneResult> AddSensorToBox(string boxId, string sensorId)
+        public async Task<ReplaceOneResult> AddSensorToBoxAsync(string boxId, string sensorId)
         {
             var boxFilter = Builders<Box>.Filter.Eq(b => b.Id, boxId);
 
@@ -91,7 +91,7 @@ namespace DataAccessLayer
         }
 
         // Get sensor by id.
-        public async Task<Sensor> GetSensor(string id)
+        public async Task<Sensor> GetSensorAsync(string id)
         {
             var filter = Builders<Sensor>.Filter.Eq(s => s.Id, id);
 
@@ -99,7 +99,7 @@ namespace DataAccessLayer
         }
 
         // Update sensor.
-        public async Task<UpdateResult> UpdateSensor(Sensor newSensor)
+        public async Task<UpdateResult> UpdateSensorAsync(Sensor newSensor)
         {
             var filter = Builders<Sensor>.Filter.Eq(b => b.Id, newSensor.Id);
 
@@ -109,7 +109,7 @@ namespace DataAccessLayer
         }
 
         // Delete sensor.
-        public async Task<DeleteResult> DeleteSensor(string id)
+        public async Task<DeleteResult> DeleteSensorAsync(string id)
         {
             var filter = Builders<Sensor>.Filter.Eq(s => s.Id, id);
 
