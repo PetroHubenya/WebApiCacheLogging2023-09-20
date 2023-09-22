@@ -14,6 +14,6 @@ namespace Models
 
         [BsonElement("items")]
         [JsonPropertyName("items")]
-        public List<Sensor> SensorIds { get; set; } = null!;
+        public List<Sensor> Sensors { get; set; } = null!;
     }
 }
