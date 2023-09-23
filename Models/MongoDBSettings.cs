@@ -15,5 +15,7 @@ namespace Models
         public string CollectionNameBoxes { get; set; } = null!;
 
         public string CollectionNameSensors { get; set; } = null!;
+
+        public string CollectionNameSensorsData { get; set; } = null!;
     }
 }

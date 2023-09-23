@@ -18,6 +18,6 @@ namespace Models
 
         public TypeOfSensor SensorType { get; set; }
 
-        public List<SensorData>? SensorData { get; set; }
+        // public List<SensorData>? SensorData { get; set; }
     }
 }

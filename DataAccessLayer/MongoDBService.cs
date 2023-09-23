@@ -12,12 +12,15 @@ namespace DataAccessLayer
 
         private readonly IMongoCollection<Sensor> _sensorCollection;
 
+        private readonly IMongoCollection<SensorData> _sensorDataCollection;
+
         public MongoDBService(IOptions<MongoDBSettings> mongoDBSettings)
         {
             MongoClient client = new MongoClient(mongoDBSettings.Value.ConnectionURL);
             IMongoDatabase database = client.GetDatabase(mongoDBSettings.Value.DatabaseName);
             _boxCollection = database.GetCollection<Box>(mongoDBSettings.Value.CollectionNameBoxes);
             _sensorCollection = database.GetCollection<Sensor>(mongoDBSettings.Value.CollectionNameSensors);
+            _sensorDataCollection = database.GetCollection<SensorData>(mongoDBSettings.Value.CollectionNameSensorsData);
         }
 
         // Box CRUD.----------------------------------------------------------------
@@ -67,11 +70,7 @@ namespace DataAccessLayer
 
             Box box = await _boxCollection.Find(boxFilter).FirstOrDefaultAsync();
 
-            var sensorFilter = Builders<Sensor>.Filter.Eq(s => s.Id, sensorId);
-
-            Sensor sensor = await _sensorCollection.Find(sensorFilter).FirstOrDefaultAsync();
-
-            box.Sensors.Add(sensor);
+            box.SensorIds.Add(sensorId);
 
             return await _boxCollection.ReplaceOneAsync(boxFilter, box);
         }
@@ -112,6 +111,36 @@ namespace DataAccessLayer
             var filter = Builders<Sensor>.Filter.Eq(s => s.Id, id);
 
             return await _sensorCollection.DeleteOneAsync(filter);
+        }
+
+        // SensorData Crud. ----------------------------------------------------------------
+
+        // Create SensorData for the specific sensor.
+        public async Task CreateSensorDataAsync(SensorData sensorData)
+        {
+            await _sensorDataCollection.InsertOneAsync(sensorData);
+        }
+
+        // Get all SensorData.
+        public async Task<List<SensorData>> GetAllSensorDataAsync()
+        {
+            return await _sensorDataCollection.Find(new BsonDocument()).ToListAsync();
+        }
+
+        // Get SensorData of the specific sensor.
+        public async Task<List<SensorData>> GetSensorsDataAsync(string sensorId)
+        {
+            var filter = Builders<SensorData>.Filter.Eq(sd => sd.SensorId, sensorId);
+
+            return await _sensorDataCollection.Find(filter).ToListAsync();
+        }
+
+        // Delete SensorData of the specific sensor.
+        public async Task<DeleteResult> DeleteSensorDataAsync(string sensorId)
+        {
+            var filter = Builders<SensorData>.Filter.Eq(sd => sd.SensorId, sensorId);
+
+            return await _sensorDataCollection.DeleteManyAsync(filter);
         }
     }
 }
