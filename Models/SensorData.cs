@@ -18,6 +18,6 @@ namespace Models
 
         public double Value { get; set; }
 
-        public DateTime Timestamp { get; set; }
+        public DateTime Timestamp { get; set; } = DateTime.UtcNow;
     }
 }

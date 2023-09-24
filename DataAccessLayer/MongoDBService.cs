@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using Models;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using System.Linq;
 
 namespace DataAccessLayer
 {
@@ -128,15 +129,47 @@ namespace DataAccessLayer
         }
 
         // Get SensorData of the specific sensor.
-        public async Task<List<SensorData>> GetSensorsDataAsync(string sensorId)
+        public async Task<List<SensorData>> GetSensorsDataBySensorIdAsync(string sensorId)
         {
             var filter = Builders<SensorData>.Filter.Eq(sd => sd.SensorId, sensorId);
 
             return await _sensorDataCollection.Find(filter).ToListAsync();
         }
 
-        // Delete SensorData of the specific sensor.
-        public async Task<DeleteResult> DeleteSensorDataAsync(string sensorId)
+        // Get SensorData of the specific sensor with pagination.
+        public async Task<SensorDataPagination> GetSensorsDataPaginationAsync(string sensorId, int rows, int page)
+        {
+            var filter = Builders<SensorData>.Filter.Eq(sd => sd.SensorId, sensorId);
+
+            var sort = Builders<SensorData>.Sort.Descending(sd => sd.Timestamp);
+
+            var options = new FindOptions<SensorData, SensorData>
+            {
+                Sort = sort,
+
+                Skip = (page - 1) * rows,
+
+                Limit = rows
+            };
+
+            var sensorDataList = await _sensorDataCollection.Find(filter, options).ToListAsync();
+
+            var totalSensorDataCount = await _sensorDataCollection.CountDocumentsAsync(filter);
+
+            var pages = (int)Math.Ceiling((double)totalSensorDataCount / rows);
+
+            var result = new SensorDataPagination
+            {
+                SensorData = sensorDataList,
+                Pages = pages
+            };
+
+            return result;
+        }
+
+
+        // Delete all SensorData of the specific sensor.
+        public async Task<DeleteResult> DeleteAllSensorDataBySensorIdAsync(string sensorId)
         {
             var filter = Builders<SensorData>.Filter.Eq(sd => sd.SensorId, sensorId);
 
