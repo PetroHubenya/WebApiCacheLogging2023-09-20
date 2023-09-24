@@ -22,6 +22,8 @@ builder.Services.AddScoped<IBoxService, BoxService>();
 
 builder.Services.AddScoped<ISensorService, SensorService>();
 
+builder.Services.AddScoped<ISensorDataService, SensorDataService>();
+
 //----------------------------------------------------------------
 
 var app = builder.Build();

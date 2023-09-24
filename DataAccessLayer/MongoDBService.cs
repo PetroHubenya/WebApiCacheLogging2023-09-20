@@ -114,7 +114,7 @@ namespace DataAccessLayer
             return await _sensorCollection.DeleteOneAsync(filter);
         }
 
-        // SensorData Crud. ----------------------------------------------------------------
+        // SensorData CRUD. ----------------------------------------------------------------
 
         // Create SensorData for the specific sensor.
         public async Task CreateSensorDataAsync(SensorData sensorData)
