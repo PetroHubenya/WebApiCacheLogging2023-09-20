@@ -137,36 +137,36 @@ namespace DataAccessLayer
         }
 
         // Get SensorData of the specific sensor with pagination.
-        public async Task<SensorDataPagination> GetSensorsDataPaginationAsync(string sensorId, int rows, int page)
+        public SensorDataPagination GetSensorsDataPaginationAsync(string sensorId, int rows, int page)
         {
-            var filter = Builders<SensorData>.Filter.Eq(sd => sd.SensorId, sensorId);
+            var queryableCollection = _sensorDataCollection.AsQueryable();
 
-            var sort = Builders<SensorData>.Sort.Descending(sd => sd.Timestamp);
+            List<SensorData> sensorDataList = queryableCollection.Where(sd => sd.SensorId == sensorId)
+                                                                 .OrderByDescending(sd => sd.Timestamp)
+                                                                 .Select(sd => new SensorData
+                                                                 {
+                                                                     Id = sd.Id,
+                                                                     SensorId = sd.SensorId,
+                                                                     Value = sd.Value,
+                                                                     Timestamp = sd.Timestamp
+                                                                 })
+                                                                 .Skip((page - 1) * rows)
+                                                                 .Take(rows)
+                                                                 .ToList();
 
-            var options = new FindOptions<SensorData, SensorData>
-            {
-                Sort = sort,
-
-                Skip = (page - 1) * rows,
-
-                Limit = rows
-            };
-
-            var sensorDataList = await _sensorDataCollection.Find(filter, options).ToListAsync();
-
-            var totalSensorDataCount = await _sensorDataCollection.CountDocumentsAsync(filter);
+            int totalSensorDataCount = queryableCollection.Where(sd => sd.SensorId == sensorId)
+                                                          .Count();
 
             var pages = (int)Math.Ceiling((double)totalSensorDataCount / rows);
 
             var result = new SensorDataPagination
             {
-                SensorData = sensorDataList,
-                Pages = pages
+                SensorDataList = sensorDataList,
+                NumberOfPages = pages
             };
 
             return result;
         }
-
 
         // Delete all SensorData of the specific sensor.
         public async Task<DeleteResult> DeleteAllSensorDataBySensorIdAsync(string sensorId)

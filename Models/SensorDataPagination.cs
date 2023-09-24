@@ -8,8 +8,8 @@ namespace Models
 {
     public class SensorDataPagination
     {
-        public List<SensorData>? SensorData { get; set; }
+        public List<SensorData>? SensorDataList { get; set; }
 
-        public int Pages { get; set; }
+        public int NumberOfPages { get; set; }
     }
 }
