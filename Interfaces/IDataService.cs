@@ -18,12 +18,11 @@ namespace Interfaces
         Task<DeleteResult> DeleteBoxAsync(string id);
         Task<DeleteResult> DeleteSensorAsync(string id);
         Task<List<Box>> GetAllBoxesAsync();
-        Task<List<SensorData>> GetAllSensorDataAsync();
         Task<List<Sensor>> GetAllSensorsAsync();
         Task<Box> GetBoxAsync(string id);
         Task<Sensor> GetSensorAsync(string id);
         Task<List<SensorData>> GetSensorsDataBySensorIdAsync(string sensorId);
-        SensorDataPagination GetSensorsDataPaginationAsync(string sensorId, int rows, int page);
+        Task<(int totalPages, IReadOnlyList<SensorData> readOnlyList)> GetSensorsDataPaginationAsync(string sensorId, int page, int pageSize);
         Task<UpdateResult> UpdateBoxAsync(string id, Box newBox);
         Task<ReplaceOneResult> UpdateSensorAsync(string id, Sensor newSensor);
     }

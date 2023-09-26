@@ -3,7 +3,9 @@ using Microsoft.Extensions.Options;
 using Models;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace DataAccessLayer
 {
@@ -119,13 +121,9 @@ namespace DataAccessLayer
         // Create SensorData for the specific sensor.
         public async Task CreateSensorDataAsync(SensorData sensorData)
         {
-            await _sensorDataCollection.InsertOneAsync(sensorData);
-        }
+            // Add validation to be sure, that the sensor exist in sensors collection.
 
-        // Get all SensorData.
-        public async Task<List<SensorData>> GetAllSensorDataAsync()
-        {
-            return await _sensorDataCollection.Find(new BsonDocument()).ToListAsync();
+            await _sensorDataCollection.InsertOneAsync(sensorData);
         }
 
         // Get SensorData of the specific sensor.
@@ -137,36 +135,46 @@ namespace DataAccessLayer
         }
 
         // Get SensorData of the specific sensor with pagination.
-        public SensorDataPagination GetSensorsDataPaginationAsync(string sensorId, int rows, int page)
+        public async Task<(int totalPages, IReadOnlyList<SensorData> readOnlyList)> GetSensorsDataPaginationAsync(string sensorId,
+                                                                                                                  int page,
+                                                                                                                  int pageSize)
         {
-            var queryableCollection = _sensorDataCollection.AsQueryable();
+            var countFacet = AggregateFacet.Create("count", PipelineDefinition<SensorData, AggregateCountResult>
+                                           .Create(new[]
+                                           {
+                                               PipelineStageDefinitionBuilder.Count<SensorData>()
+                                           }));
 
-            List<SensorData> sensorDataList = queryableCollection.Where(sd => sd.SensorId == sensorId)
-                                                                 .OrderByDescending(sd => sd.Timestamp)
-                                                                 .Select(sd => new SensorData
-                                                                 {
-                                                                     Id = sd.Id,
-                                                                     SensorId = sd.SensorId,
-                                                                     Value = sd.Value,
-                                                                     Timestamp = sd.Timestamp
-                                                                 })
-                                                                 .Skip((page - 1) * rows)
-                                                                 .Take(rows)
-                                                                 .ToList();
+            var dataFacet = AggregateFacet.Create("data", PipelineDefinition<SensorData, SensorData>
+                                          .Create(new[]
+                                          {
+                                              PipelineStageDefinitionBuilder.Sort(Builders<SensorData>.Sort.Ascending(sd => sd.SensorId == sensorId)),
+                                              PipelineStageDefinitionBuilder.Skip<SensorData>((page - 1) * pageSize),
+                                              PipelineStageDefinitionBuilder.Limit<SensorData>(pageSize),
+                                          }));
 
-            int totalSensorDataCount = queryableCollection.Where(sd => sd.SensorId == sensorId)
-                                                          .Count();
+            var filter = Builders<SensorData>.Filter.Empty;
 
-            var pages = (int)Math.Ceiling((double)totalSensorDataCount / rows);
+            var aggregation = await _sensorDataCollection.Aggregate()
+                                                         .Match(filter)
+                                                         .Facet(countFacet, dataFacet)
+                                                         .ToListAsync();
 
-            var result = new SensorDataPagination
-            {
-                SensorDataList = sensorDataList,
-                NumberOfPages = pages
-            };
+            var count = aggregation.First()
+                                   .Facets.First(x => x.Name == "count")
+                                   .Output<AggregateCountResult>()
+                                   ?.FirstOrDefault()
+                                   ?.Count ?? 0;
 
-            return result;
+            var totalPages = (int)count / pageSize;
+
+            var data = aggregation.First()
+                                  .Facets.First(x => x.Name == "data")
+                                  .Output<SensorData>();
+
+            return (totalPages, data);
         }
+
 
         // Delete all SensorData of the specific sensor.
         public async Task<DeleteResult> DeleteAllSensorDataBySensorIdAsync(string sensorId)
