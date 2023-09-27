@@ -1,5 +1,6 @@
 ﻿using Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -16,36 +17,49 @@ namespace WebApi.Controllers
             _sensorService = sensorService;
         }
 
-        // GET: api/<SensorCongtroller>
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET api/<SensorCongtroller>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<SensorCongtroller>
+        // Create sensor.
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IActionResult> CreateSensorAsync(Sensor sensor)
         {
+            await _sensorService.CreateSensorAsync(sensor);
+
+            return Ok("Sensor is created.");
         }
 
-        // PUT api/<SensorCongtroller>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        // Get all sensors.
+        [HttpGet]
+        public async Task<ActionResult<List<Sensor>>> GetAllSensorsAsync()
         {
+            var result = await _sensorService.GetAllSensorsAsync();
+
+            return Ok(result);
         }
 
-        // DELETE api/<SensorCongtroller>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        // Get sensor by id.
+        [HttpGet("id")]
+        public async Task<ActionResult<Sensor>> GetSensorAsync(string id)
         {
+            var result = await _sensorService.GetSensorAsync(id);
+
+            return Ok(result);
+        }
+
+        // Update sensor.
+        [HttpPut("id")]
+        public async Task<IActionResult> UpdateSensorAsync(string id, Sensor newSensor)
+        {
+            await _sensorService.UpdateSensorAsync(id, newSensor);
+
+            return Ok("Sensor updated successfully.");
+        }
+
+        // Delete sensor.
+        [HttpDelete("id")]
+        public async Task<IActionResult> DeleteSensorAsync(string id)
+        {
+            await _sensorService.DeleteSensorAsync(id);
+
+            return Ok("Sensor deleted successfully.");
         }
     }
 }
