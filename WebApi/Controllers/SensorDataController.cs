@@ -18,6 +18,7 @@ namespace WebApi.Controllers
         }
 
         // Create SensorData for the specific sensor.
+        [HttpPost]
         public async Task<IActionResult> CreateSensorDataAsync(SensorData sensorData)
         {
             await _sensorDataService.CreateSensorDataAsync(sensorData);
@@ -26,6 +27,7 @@ namespace WebApi.Controllers
         }
 
         // Get SensorData of the specific sensor.
+        [HttpGet("sensorId")]
         public async Task<ActionResult<List<SensorData>>> GetSensorsDataBySensorIdAsync(string sensorId)
         {
             var result = await _sensorDataService.GetSensorsDataBySensorIdAsync(sensorId);
@@ -34,6 +36,7 @@ namespace WebApi.Controllers
         }
 
         // Get SensorData of the specific sensor with pagination.
+        [HttpGet("{sensorId}/{page}/{pageSize}")]
         public async Task<ActionResult<(int totalPages, IReadOnlyList<SensorData> readOnlyList)>> GetSensorsDataPaginationAsync(string sensorId,
                                                                                                                   int page,
                                                                                                                   int pageSize)
@@ -44,6 +47,7 @@ namespace WebApi.Controllers
         }
 
         // Delete all SensorData of the specific sensor.
+        [HttpDelete("sensorId")]
         public async Task<ActionResult<DeleteResult>> DeleteAllSensorDataBySensorIdAsync(string sensorId)
         {
             var result = await _sensorDataService.DeleteAllSensorDataBySensorIdAsync(sensorId);
