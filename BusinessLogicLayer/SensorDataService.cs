@@ -1,4 +1,6 @@
 ﻿using Interfaces;
+using Models;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +16,32 @@ namespace BusinessLogicLayer
         public SensorDataService(IDataService dataService)
         {
             _dataService = dataService;
+        }
+
+        // Create SensorData for the specific sensor.
+        public async Task CreateSensorDataAsync(SensorData sensorData)
+        {
+            await _dataService.CreateSensorDataAsync(sensorData);
+        }
+
+        // Get SensorData of the specific sensor.
+        public async Task<List<SensorData>> GetSensorsDataBySensorIdAsync(string sensorId)
+        {
+            return await _dataService.GetSensorsDataBySensorIdAsync(sensorId);
+        }
+
+        // Get SensorData of the specific sensor with pagination.
+        public async Task<(int totalPages, IReadOnlyList<SensorData> readOnlyList)> GetSensorsDataPaginationAsync(string sensorId,
+                                                                                                                  int page,
+                                                                                                                  int pageSize)
+        {
+            return await _dataService.GetSensorsDataPaginationAsync(sensorId, page, pageSize);
+        }
+
+        // Delete all SensorData of the specific sensor.
+        public async Task<DeleteResult> DeleteAllSensorDataBySensorIdAsync(string sensorId)
+        {
+            return await _dataService.DeleteAllSensorDataBySensorIdAsync(sensorId);
         }
     }
 }
