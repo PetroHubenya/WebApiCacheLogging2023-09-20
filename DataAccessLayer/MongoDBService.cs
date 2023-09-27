@@ -46,7 +46,6 @@ namespace DataAccessLayer
             {
                 throw;
             }
-            
         }
 
         // Get all boxes.
@@ -221,37 +220,140 @@ namespace DataAccessLayer
         // Create sensor.
         public async Task CreateSensorAsync(Sensor sensor)
         {
-            await _sensorCollection.InsertOneAsync(sensor);
+            try
+            {
+                if (sensor == null)
+                {
+                    throw new ArgumentNullException(nameof(sensor));
+                }
+                else
+                {
+                    await _sensorCollection.InsertOneAsync(sensor);
+                }
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         // Get all sensors.
         public async Task<List<Sensor>> GetAllSensorsAsync()
         {
-            return await _sensorCollection.Find(new BsonDocument()).ToListAsync();
+            try
+            {
+                var result = await _sensorCollection.Find(new BsonDocument()).ToListAsync();
+
+                if (result == null)
+                {
+                    throw new Exception("The list of sensors is not found.");
+                }
+                else
+                {
+                    return result;
+                }
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         // Get sensor by id.
         public async Task<Sensor> GetSensorAsync(string id)
         {
-            var filter = Builders<Sensor>.Filter.Eq(s => s.Id, id);
+            try
+            {
+                if (string.IsNullOrEmpty(id))
+                {
+                    throw new ArgumentNullException(nameof(id));
+                }
+                else
+                {
+                    var filter = Builders<Sensor>.Filter.Eq(s => s.Id, id);
 
-            return await _sensorCollection.Find(filter).FirstOrDefaultAsync();
+                    var result = await _sensorCollection.Find(filter).FirstOrDefaultAsync();
+
+                    if (result == null)
+                    {
+                        throw new Exception($"The sensor with the {id} Id was not found");
+                    }
+                    else
+                    {
+                        return result;
+                    }
+                }
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         // Update sensor.
         public async Task<ReplaceOneResult> UpdateSensorAsync(string id, Sensor newSensor)
         {
-            var filter = Builders<Sensor>.Filter.Eq(b => b.Id, id);
+            try
+            {
+                if(string.IsNullOrEmpty(id))
+                {
+                    throw new ArgumentNullException(nameof(id));
+                }
+                else if (newSensor == null)
+                {
+                    throw new ArgumentNullException(nameof(newSensor));
+                }
+                else
+                {
+                    var filter = Builders<Sensor>.Filter.Eq(b => b.Id, id);
 
-            return await _sensorCollection.ReplaceOneAsync(filter, newSensor);
+                    var result = await _sensorCollection.ReplaceOneAsync(filter, newSensor);
+
+                    if (result == null)
+                    {
+                        throw new Exception($"The Sensor with the {id} Id was not updated.");
+                    }
+                    else
+                    {
+                        return result;
+                    }
+                }
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         // Delete sensor.
         public async Task<DeleteResult> DeleteSensorAsync(string id)
         {
-            var filter = Builders<Sensor>.Filter.Eq(s => s.Id, id);
+            try
+            {
+                if (string.IsNullOrEmpty(id))
+                {
+                    throw new ArgumentNullException(nameof (id));
+                }
+                else
+                {
+                    var filter = Builders<Sensor>.Filter.Eq(s => s.Id, id);
 
-            return await _sensorCollection.DeleteOneAsync(filter);
+                    var result = await _sensorCollection.DeleteOneAsync(filter);
+
+                    if (result == null)
+                    {
+                        throw new Exception($"The sensor with the {id} Id was not deleted.");
+                    }
+                    else
+                    {
+                        return result;
+                    }
+                }
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         // SensorData CRUD. ----------------------------------------------------------------
