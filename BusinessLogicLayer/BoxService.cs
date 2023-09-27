@@ -40,6 +40,17 @@ namespace BusinessLogicLayer
         // Delete box.
         public async Task DeleteBoxAsync(string id)
         {
+            // Delete all the SensorData for the correspondent sensors.
+
+            var box = await _dataService.GetBoxAsync(id);
+
+            foreach (string sensorId in box.SensorIds)
+            {
+                await _dataService.DeleteAllSensorDataBySensorIdAsync(sensorId);
+            }
+
+            // Delete the box.
+
             await _dataService.DeleteBoxAsync(id);
         }
 

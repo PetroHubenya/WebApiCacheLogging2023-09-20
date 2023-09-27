@@ -21,7 +21,30 @@ namespace BusinessLogicLayer
         // Create SensorData for the specific sensor.
         public async Task CreateSensorDataAsync(SensorData sensorData)
         {
-            await _dataService.CreateSensorDataAsync(sensorData);
+            if (sensorData == null)
+            {
+                throw new ArgumentNullException(nameof(sensorData));
+            }
+            else
+            {
+                if (sensorData.SensorId == null)
+                {
+                    throw new ArgumentNullException(nameof(sensorData.SensorId));
+                }
+                else
+                {
+                    Sensor sensor = await _dataService.GetSensorAsync(sensorData.SensorId);
+
+                    if (sensor == null)
+                    {
+                        throw new ArgumentNullException(nameof(sensor));
+                    }
+                    else
+                    {
+                        await _dataService.CreateSensorDataAsync(sensorData);
+                    }
+                }
+            }
         }
 
         // Get SensorData of the specific sensor.
