@@ -31,51 +31,189 @@ namespace DataAccessLayer
         // Create box.
         public async Task CreateBoxAsync(Box box)
         {
-            await _boxCollection.InsertOneAsync(box);
+            try
+            {
+                if (box == null)
+                {
+                    throw new ArgumentNullException(nameof(box));
+                }
+                else
+                {
+                    await _boxCollection.InsertOneAsync(box);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            
         }
 
         // Get all boxes.
         public async Task<List<Box>> GetAllBoxesAsync()
         {
-            return await _boxCollection.Find(new BsonDocument()).ToListAsync();
+            try
+            {
+                var result = await _boxCollection.Find(new BsonDocument()).ToListAsync();
+
+                if (result == null)
+                {
+                    throw new Exception("The list of all boxes is not found.");
+                }
+                else
+                {
+                    return result;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         // Get box by id.
         public async Task<Box> GetBoxAsync(string id)
         {
-            var filter = Builders<Box>.Filter.Eq(b => b.Id, id);
+            try
+            {
+                if (id == null)
+                {
+                    throw new ArgumentNullException(nameof(id));
+                }
+                else
+                {
+                    var filter = Builders<Box>.Filter.Eq(b => b.Id, id);
 
-            return await _boxCollection.Find(filter).FirstOrDefaultAsync();
+                    var result = await _boxCollection.Find(filter).FirstOrDefaultAsync();
+
+                    if (result == null)
+                    {
+                        throw new Exception($"The Box with the {id} Id is not found.");
+                    }
+                    else
+                    {
+                        return result;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         // Update box.
         public async Task<UpdateResult> UpdateBoxAsync(string id, Box newBox)
         {
-            var filter = Builders<Box>.Filter.Eq(b => b.Id, id);
+            try
+            {
+                if (id == null)
+                {
+                    throw new ArgumentNullException(nameof(id));
+                }
+                else if (newBox == null)
+                {
+                    throw new ArgumentNullException(nameof(newBox));
+                }
+                else
+                {
+                    var filter = Builders<Box>.Filter.Eq(b => b.Id, id);
 
-            var update = Builders<Box>.Update.Set(b => b.Name, newBox.Name);
+                    var update = Builders<Box>.Update.Set(b => b.Name, newBox.Name);
 
-            return await _boxCollection.UpdateOneAsync(filter, update);
+                    var result = await _boxCollection.UpdateOneAsync(filter, update);
+
+                    if (result == null)
+                    {
+                        throw new Exception($"The Box with the {id} Id is not updated.");
+                    }
+                    else
+                    {
+                        return result;
+                    }
+                }
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         // Delete box.
         public async Task<DeleteResult> DeleteBoxAsync(string id)
         {
-            var filter = Builders<Box>.Filter.Eq(b => b.Id, id);
+            try
+            {
+                if (string.IsNullOrEmpty(id))
+                {
+                    throw new ArgumentNullException(nameof(id));
+                }
+                else
+                {
+                    var filter = Builders<Box>.Filter.Eq(b => b.Id, id);
 
-            return await _boxCollection.DeleteOneAsync(filter);
+                    var result = await _boxCollection.DeleteOneAsync(filter);
+
+                    if (result == null)
+                    {
+                        throw new Exception($"The Box with the {id} Id is not deleted.");
+                    }
+                    else
+                    {
+                        return result;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         // Add sensor to the box.
         public async Task<ReplaceOneResult> AddSensorToBoxAsync(string boxId, string sensorId)
         {
-            var boxFilter = Builders<Box>.Filter.Eq(b => b.Id, boxId);
+            try
+            {
+                if (string.IsNullOrEmpty(boxId))
+                {
+                    throw new ArgumentNullException(nameof(boxId));
+                }
+                else if (string.IsNullOrEmpty(sensorId))
+                {
+                    throw new ArgumentNullException(nameof(sensorId));
+                }
+                else
+                {
+                    var boxFilter = Builders<Box>.Filter.Eq(b => b.Id, boxId);
 
-            Box box = await _boxCollection.Find(boxFilter).FirstOrDefaultAsync();
+                    Box box = await _boxCollection.Find(boxFilter).FirstOrDefaultAsync();
 
-            box.SensorIds.Add(sensorId);
+                    if (box == null)
+                    {
+                        throw new Exception($"The Box with {boxId} Id is not found.");
+                    }
+                    else
+                    {
+                        box.SensorIds.Add(sensorId);
 
-            return await _boxCollection.ReplaceOneAsync(boxFilter, box);
+                        var result = await _boxCollection.ReplaceOneAsync(boxFilter, box);
+
+                        if (result == null)
+                        {
+                            throw new Exception($"The Sensor with the {sensorId} Id is not added to the Box with {boxId} Id.");
+                        }
+                        else
+                        {
+                            return result;
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         // Sensor CRUD.----------------------------------------------------------------

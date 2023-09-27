@@ -45,6 +45,8 @@ namespace BusinessLogicLayer
         // Delete sensor.
         public async Task DeleteSensorAsync(string id)
         {
+            await _dataService.DeleteAllSensorDataBySensorIdAsync(id);
+
             await _dataService.DeleteSensorAsync(id);
         }
     }
