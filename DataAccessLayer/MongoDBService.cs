@@ -388,7 +388,7 @@ namespace DataAccessLayer
             var dataFacet = AggregateFacet.Create("data", PipelineDefinition<SensorData, SensorData>
                                           .Create(new[]
                                           {
-                                              PipelineStageDefinitionBuilder.Sort(Builders<SensorData>.Sort.Ascending(sd => sd.SensorId == sensorId)),
+                                              PipelineStageDefinitionBuilder.Sort(Builders<SensorData>.Sort.Descending(sd => sd.Timestamp)),
                                               PipelineStageDefinitionBuilder.Skip<SensorData>((page - 1) * pageSize),
                                               PipelineStageDefinitionBuilder.Limit<SensorData>(pageSize),
                                           }));
@@ -403,10 +403,9 @@ namespace DataAccessLayer
             var count = aggregation.First()
                                    .Facets.First(x => x.Name == "count")
                                    .Output<AggregateCountResult>()
-                                   ?.FirstOrDefault()
                                    ?.Count ?? 0;
 
-            var totalPages = (int)count / pageSize;
+            var totalPages = count / pageSize;
 
             var data = aggregation.First()
                                   .Facets.First(x => x.Name == "data")
