@@ -21,45 +21,126 @@ namespace WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateSensorAsync(Sensor sensor)
         {
-            await _sensorService.CreateSensorAsync(sensor);
+            try
+            {
+                if (sensor == null)
+                {
+                    throw new ArgumentNullException(nameof(sensor));
+                }
+                else
+                {
+                    await _sensorService.CreateSensorAsync(sensor);
 
-            return Ok("Sensor is created.");
+                    return Ok("The sensor is created.");
+                }
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         // Get all sensors.
         [HttpGet]
         public async Task<ActionResult<List<Sensor>>> GetAllSensorsAsync()
         {
-            var result = await _sensorService.GetAllSensorsAsync();
+            try
+            {
+                var result = await _sensorService.GetAllSensorsAsync();
 
-            return Ok(result);
+                if (result == null)
+                {
+                    return NotFound("The list of sensors is not found");
+                }
+                else
+                {
+                    return Ok(result);
+                }
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         // Get sensor by id.
         [HttpGet("id")]
         public async Task<ActionResult<Sensor>> GetSensorAsync(string id)
         {
-            var result = await _sensorService.GetSensorAsync(id);
+            try
+            {
+                if (string.IsNullOrEmpty(id))
+                {
+                    throw new ArgumentNullException(nameof(id));
+                }
+                else
+                {
+                    var result = await _sensorService.GetSensorAsync(id);
 
-            return Ok(result);
+                    if (result == null)
+                    {
+                        return NotFound($"The sensor with the {id} Id is not found.");
+                    }
+                    else
+                    {
+                        return Ok(result);
+                    }
+                }
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         // Update sensor.
         [HttpPut("id")]
         public async Task<IActionResult> UpdateSensorAsync(string id, Sensor newSensor)
         {
-            await _sensorService.UpdateSensorAsync(id, newSensor);
+            try
+            {
+                if (string.IsNullOrEmpty(id))
+                {
+                    throw new ArgumentNullException(nameof(id));
+                }
+                else if (newSensor == null)
+                {
+                    throw new ArgumentNullException(nameof(newSensor));
+                }
+                else
+                {
+                    await _sensorService.UpdateSensorAsync(id, newSensor);
 
-            return Ok("Sensor updated successfully.");
+                    return Ok($"The sensor with the {id} Id is updated successfully.");
+                }
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         // Delete sensor.
         [HttpDelete("id")]
         public async Task<IActionResult> DeleteSensorAsync(string id)
         {
-            await _sensorService.DeleteSensorAsync(id);
+            try
+            {
+                if (string.IsNullOrEmpty(id))
+                {
+                    throw new ArgumentNullException(nameof(id));
+                }
+                else
+                {
+                    await _sensorService.DeleteSensorAsync(id);
 
-            return Ok("Sensor deleted successfully.");
+                    return Ok($"The sensor with the {id} Id is deleted successfully.");
+                }
+            }
+            catch
+            {
+                throw;
+            }
         }
     }
 }
