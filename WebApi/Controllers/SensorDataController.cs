@@ -21,18 +21,53 @@ namespace WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateSensorDataAsync(SensorData sensorData)
         {
-            await _sensorDataService.CreateSensorDataAsync(sensorData);
+            try
+            {
+                if (sensorData == null)
+                {
+                    throw new ArgumentNullException(nameof(sensorData));
+                }
+                else
+                {
+                    await _sensorDataService.CreateSensorDataAsync(sensorData);
 
-            return Ok("SensorData is stored into the database.");
+                    return Ok("SensorData is stored into the database.");
+                }
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         // Get SensorData of the specific sensor.
         [HttpGet("sensorId")]
         public async Task<ActionResult<List<SensorData>>> GetSensorsDataBySensorIdAsync(string sensorId)
         {
-            var result = await _sensorDataService.GetSensorsDataBySensorIdAsync(sensorId);
+            try
+            {
+                if (string.IsNullOrEmpty(sensorId))
+                {
+                    throw new ArgumentNullException(nameof(sensorId));
+                }
+                else
+                {
+                    var result = await _sensorDataService.GetSensorsDataBySensorIdAsync(sensorId);
 
-            return Ok(result);
+                    if (result == null)
+                    {
+                        return NotFound($"The list of SensorData for the sensor with the {sensorId} Id was not found.");
+                    }
+                    else
+                    {
+                        return Ok(result);
+                    }
+                }
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         // Get SensorData of the specific sensor with pagination.
@@ -41,18 +76,68 @@ namespace WebApi.Controllers
                                                                                                                   int page,
                                                                                                                   int pageSize)
         {
-            var result = await _sensorDataService.GetSensorsDataPaginationAsync(sensorId, page, pageSize);
-            
-            return Ok(result);
+            try
+            {
+                if (string.IsNullOrWhiteSpace(sensorId))
+                {
+                    throw new ArgumentNullException(nameof(sensorId));
+                }
+                else if (page <= 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(page));
+                }
+                else if (pageSize <= 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(pageSize), "The page size must be greater than 0.");
+                }
+                else
+                {
+                    var (totalPages, readOnlyList) = await _sensorDataService.GetSensorsDataPaginationAsync(sensorId, page, pageSize);
+
+                    if (readOnlyList == null)
+                    {
+                        throw new Exception("The list of SensorData is not found.");
+                    }
+                    else
+                    {
+                        return (totalPages, readOnlyList);
+                    }
+                }
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         // Delete all SensorData of the specific sensor.
         [HttpDelete("sensorId")]
         public async Task<ActionResult<DeleteResult>> DeleteAllSensorDataBySensorIdAsync(string sensorId)
         {
-            var result = await _sensorDataService.DeleteAllSensorDataBySensorIdAsync(sensorId);
+            try
+            {
+                if (string.IsNullOrEmpty(sensorId))
+                {
+                    throw new ArgumentNullException(nameof(sensorId));
+                }
+                else
+                {
+                    var result = await _sensorDataService.DeleteAllSensorDataBySensorIdAsync(sensorId);
 
-            return Ok(result);
+                    if (result == null)
+                    {
+                        throw new Exception($"Could not delete SensorData for the sensor with the {sensorId} Id.");
+                    }
+                    else
+                    {
+                        return result;
+                    }
+                }
+            }
+            catch
+            {
+                throw;
+            }
         }
     }
 }
